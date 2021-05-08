@@ -1,121 +1,118 @@
 const Engine = Matter.Engine;
-const World= Matter.World;
+const World = Matter.World;
 const Bodies = Matter.Bodies;
+const Render = Matter.Render;
 const Constraint = Matter.Constraint;
+var box1, box2, box3, box4, box5, box6, box7, box8, stand, ball1;
+var polygon, sling;
+var engine,world;
+var box9,box10,box11,box12,box13,box14,box15,box16;
+var polygonIMG;
+var bg = "day.png";
+var backgroundIMG;
+function preload(){
+polygonIMG = loadImage("polygon.png");
 
-var engine, world;
-
-var slingShot;
-var background1;
-var bg;
-
-function preload() {
-  getTime();
-    
+GetbackgroundIMG();
 }
 
-function setup(){
-    var canvas = createCanvas(1200,400);
-    engine = Engine.create();
-    world = engine.world;
+function setup() {
+  createCanvas(1600, 400);
+  engine = Engine.create();
+  world = engine.world;
+  stand= new Ground(1000,300,200,25);
+  Engine.run(engine);
+
+  ball1 = Bodies.circle(200,200,20);
+  World.add(world,ball1);
+
+  box1 = new Box(1050,275,25,25)
+  box2 = new Box(1025,275,25,25)
+  box3 = new Box(1000,275,25,25)
+  box4 = new Box(975,275,25,25)
+  box5 = new Box(950,275,25,25)
+  box6 = new Box(925,275,25,25)
+  box7 = new Box(1075,275,25,25)
+
+  box8 = new Box(950,250,25,25)
+  box9 = new Box(975,250,25,25)
+  box10 = new Box(1000,250,25,25)
+  box11 = new Box(1025,250,25,25)
+  box12 = new Box(1050,250,25,25)
 
 
-    ground = new Ground(380,270,200,10);
-    ground1 = new Ground(750,180,200,10);
-    
-    block8 = new Block(330,235,30,40);
-    block9 = new Block(360,235,30,40);
-    block10 = new Block(390,235,30,40);
-    block11 = new Block(420,235,30,40);
-    block12 = new Block(450,235,30,40);
+  box13 = new Box(975,225,25,25)
+  box14 = new Box(1000,225,25,25)
+  box15 = new Box(1025,225,25,25)
 
-    block13 = new Block(360,195,30,40);
-    block14 = new Block(390,195,30,40);
-    block15 = new Block(420,195,30,40);
+  box16 = new Box(1000,200,25,25)
 
-    block16 = new Block(390,155,30,40);
-
-    block17 = new Block(750,170,30,40);
-    block18 = new Block(721,170,30,40);
-    block19 = new Block(691,170,30,40);
-    block20 = new Block(780,170,30,40);
-    block21 = new Block(810,170,30,40);
-
-    block22 = new Block(721,140,30,40);
-    block23 = new Block(750,140,30,40);
-    block24 = new Block(780,140,30,40);
-
-    block25 = new Block(750,110,30,40);
-
-getTime();
-   Box = new Polygon(100,300);
-
-
-    
-    //log6 = new Log(230,180,80, PI/2);
-    slingshot1 = new SlingShot(Box.body,{x:190, y:100});
+  sling = new launcher(this.ball1,{x:200,y:200});
+  Engine.run(engine);
 }
 
-function draw(){
-    if(background1){
-        background(background1);
+function draw() {
+  if(backgroundIMG){
+    background(backgroundIMG);
+  }
+  textSize(20);
+  fill("lightyellow");
+  text("Drag the Hexagonal Stone and Release it, to launch it towards the blocks", 100, 30);
+  stand.display();
+  fill("red");
+  box1.display();
+  box2.display();
+  box3.display();
+  box4.display();
+  box5.display();
+  box6.display();
+  box7.display();
+
+  fill("yellow");
+  box8.display();
+  box9.display();
+  box10.display();
+  box11.display();
+  box12.display();
+
+  fill("green");
+  box13.display();
+  box14.display();
+  box15.display();
+  
+  fill("orange");
+  box16.display();
+
+  sling.display();
+  imageMode(CENTER);
+   image(polygonIMG,ball1.position.x,ball1.position.y,40,40);
+
+  drawSprites(); }
+
+  function mouseDragged(){
+    Matter.Body.setPosition(this.ball1,{x:mouseX,y:mouseY});
+  }
+
+  function mouseReleased(){
+    sling.fly();
+  }
+  function keyPressed(){
+    if(keyCode === 32 ){
+      
+      sling.attach(this.ball1);
     }
-    text(mouseX+","+mouseY,30,45);
-    Engine.update(engine);
-    strokeWeight(4);
-   block8.display();
-   block9.display();
-   block10.display();
-   block11.display();
-   block12.display();
-   block13.display();
-   block14.display();
-   block15.display();
-   block16.display();
-   block17.display();
-   block18.display();
-   block19.display();
-   block20.display();
-   block21.display();
-   block22.display();
-   block23.display();
-   block24.display();
-   block25.display();
-
-   Box.display();
- 
-   ground.display();
-   ground1.display();
-   slingshot1.display();
-    
-}  
-
-function mouseDragged(){
-    Matter.Body.setPosition(Box.body, {x: mouseX , y: mouseY});
-}
-
-
-function mouseReleased(){
-    slingshot1.fly();
-}
-function keyPressed(){
-    if(keyCode===32){
-    slingshot1.attach(Box.body);          
-    }
-    }
-    async function getTime(){
-        var response = await fetch("http://worldtimeapi.org/api/timezone/Asia/Kolkata");
-        var responseJSON = await response.json();
-    console.log(responseJSON);
-    var dateTime = responseJSON.datetime;
-    console.log(dateTime);
-    var hour  = dateTime.slice(11,13);
-    console.log(hour)
-    if(hour>=6&&hour<=18){
-        bg="sprites/day.jpg";
+  }
+  async function GetbackgroundIMG(){
+    var response = await fetch("http://worldtimeapi.org/api/timezone/Asia/Kolkata")
+    var response1 = await response.json() 
+    var day = response1.datetime;
+    var hour = day.slice(11,13);
+    if(hour >= 06 && hour <= 18){
+      bg ="day.png";
     }else{
-        bg = "sprites/night.jpg";
+      bg = "dark.jpg";
     }
-    background1 = loadImage(bg);
-    }
-    
+    backgroundIMG = loadImage(bg);
+    console.log(bg);
+    console.log(hour);
+  }
